@@ -4,5 +4,13 @@
   "main": "index.js",
   "repository": "https://github.com/LeoFC97/SlideAI-Backend.git",
   "author": "Leonardo Costa <leonardo.fc2@outlook.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "scripts": {
+    "start":"node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test":"jest"
+  }
 }
