@@ -1,0 +1,8 @@
+{
+  "name": "SlideAI-Backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/LeoFC97/SlideAI-Backend.git",
+  "author": "Leonardo Costa <leonardo.fc2@outlook.com>",
+  "license": "MIT"
+}
