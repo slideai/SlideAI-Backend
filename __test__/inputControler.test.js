@@ -1,0 +1,1 @@
+const Robot = require('../src/');
