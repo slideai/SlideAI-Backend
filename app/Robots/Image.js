@@ -10,7 +10,7 @@ class Robot {
   start(content) {
     return new Promise(async (next, reject) => {
     try {
-      const {  searchTerm, sentences, lang } = content;
+      const { searchTerm, sentences, lang } = content;
       content.sentences = await this.fetchImagesOfAllSentences(searchTerm, sentences, lang);
       content.sentences = this.fetchSentencesTitles(searchTerm, content.sentences, lang);
       content.downloadedImages = await this.downloadAllImages(content.sentences);
@@ -69,7 +69,7 @@ class Robot {
       q: query,
       imgSize: 'large',
       searchType: 'image',
-      lr: lang === 'pt' ? 'lang_pt' : 'lang_en',
+      lr: `lang_${lang}`,
       num: 2
     })
     

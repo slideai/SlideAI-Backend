@@ -1,7 +1,7 @@
 const fs = require('fs');
 const pptx = require('pptxgenjs');
 
-const pathForLogoTransparent = '../../assets/logo_transparent.png';
+const pathForLogoTransparent = './assets/logo_transparent.png';
 const repUrl = 'https://github.com/LeoFC97/pptx-maker';
 
 class Robot {
@@ -37,7 +37,7 @@ class Robot {
   createCoverSlide(presentation, author, prefix, searchTerm, lang, font) {
     let coverSlide =  presentation.addNewSlide();
 
-    this.insertBackgroundImage(coverSlide, 'content/0-original.png');
+    this.insertBackgroundImage(coverSlide, './content/0-original.png');
     this.insertOpacityBackground(coverSlide, presentation.shapes.RECTANGLE);
     this.insertLogo(coverSlide);
     this.insertCredits(coverSlide, lang, font);
@@ -50,8 +50,8 @@ class Robot {
         let i = 0;
 
         for(i = 0; i < maximumSentences; i++) {
-          const photoExists = await this.verifyIfImageExists(`content/${i}-original.png`);
-          const imageUrl = photoExists ? `content/${i}-original.png` : `content/0-original.png`;
+          const photoExists = await this.verifyIfImageExists(`./content/${i}-original.png`);
+          const imageUrl = photoExists ? `./content/${i}-original.png` : `./content/0-original.png`;
           this.createSlide(presentation, imageUrl, sentences[i].title, sentences[i].text, font);
         }
 
@@ -84,14 +84,14 @@ class Robot {
 
 
   savePresentation(presentation, searchTerm) {
-    presentation.save(searchTerm);
+    presentation.save(`./public/slides/${searchTerm}`);
   }
 
   async clearContentImages(maximumSentences) {
     let i = 0;
 
     for(i = 0; i < maximumSentences; i++) {
-      await this.removeImage(`content/${i}-original.png`);
+      await this.removeImage(`./content/${i}-original.png`);
     }
   }
 
