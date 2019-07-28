@@ -1,7 +1,3 @@
-const sharp = require('sharp')
-const path = require('path')
-
-
 module.exports = {
     async test(req,res){
         console.log("entrou no index")
