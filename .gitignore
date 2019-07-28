@@ -63,3 +63,5 @@ yarn.lock
 
 credentials/*.json
 !/credentials/gitkeep
+content/*.png
+*.pptx

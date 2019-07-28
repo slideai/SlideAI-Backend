@@ -13,19 +13,6 @@ const nlu = new NaturalLanguageUnderstandingV1({
 
 
 module.exports = {
-
-  async start(recivedViaInput) {
-
-    content.sourceContentSanitized = this.sanitizeContent(content.sourceContentOriginal)
-    content.sentences = this.breakContentIntoSentences(content.sourceContentSanitized)
-    content.sentences = this.limitMaximumSentences(content.sentences, content.maximumSentences)
-
-    console.log('> [text-robot] Starting to fetch keywords from Watson')
-    content.sentences = await this.fetchKeywordsOfAllSentences(content.sentences)
-
-    return content
-  },
-
   async fetchContentFromWikipedia(articleName, lang) {
     const algorithmiaAuthenticated = algorithmia(algorithmiaApiKey)
     const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2')
@@ -83,9 +70,7 @@ module.exports = {
 
   async fetchKeywordsOfAllSentences(sentences) {
     for (const sentence of sentences) {
-      console.log(`> [text-robot] Sentence: "${sentence.text}"`)
       sentence.keywords = await this.fetchWatsonAndReturnKeywords(sentence.text)
-      console.log(`> [text-robot] Keywords: ${sentence.keywords.join(', ')}\n`)
     }
     return sentences;
   },

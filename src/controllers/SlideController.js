@@ -1,27 +1,58 @@
+const robots = {
+    text: require('../Robots/Text'),
+    image: require('../Robots/Image'),
+    powerPoint: require('../Robots/PowerPoint')
+}
+
 module.exports = {
     async test(req,res){
         console.log("entrou no index")
         return res.json('aa')
     },
     async startPresentation(req,res){
-        console.log(req.body)
-        const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,maximumSentences } = req.body
-        const robots = {
-            text: require('./TextController')
-        }
+        const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,numberOsSlides } = req.body
         console.log(recivedViaFrontEnd)
+
+        //text robot
         const sourceContentOriginal = await robots.text.fetchContentFromWikipedia(
                 recivedViaFrontEnd.searchTerm,
                 recivedViaFrontEnd.lang) 
         const sourceContentSanitized = await robots.text.sanitizeContent(
                 sourceContentOriginal
             )
-        const sentences = await robots.text.breakContentIntoSentences(
+        const contentBreakedIntoSentences = await robots.text.breakContentIntoSentences(
                 sourceContentSanitized
             )
-         console.log(sourceContentOriginal)
-         console.log(sourceContentSanitized)
-         console.log(sentences)
+        const selectSentencesByLimit = await robots.text.limitMaximumSentences(
+            contentBreakedIntoSentences,numberOsSlides
+        )
+        const sentences = await robots.text.fetchKeywordsOfAllSentences(
+            selectSentencesByLimit
+        )
+        console.log(sentences)
+
+
+        //image robot
+        const fetchedImagesOfAllSentences = await robots.image.fetchImagesOfAllSentences(
+            recivedViaFrontEnd.searchTerm,
+            sentences,
+            recivedViaFrontEnd.lang
+        )
+        const titlesOfSentences = await robots.image.fetchSentencesTitles(
+            recivedViaFrontEnd.searchTerm,
+            fetchedImagesOfAllSentences,
+            recivedViaFrontEnd.lang
+        )
+        const downloadedImages = await robots.image.downloadAllImages(
+            titlesOfSentences
+        )
+        console.log(downloadedImages)
+
+
+
+        //powerPoint robot
+        robots.powerPoint.start(recivedViaFrontEnd,sentences,downloadedImages)
+        
 
         return res.json("Terminou")
     }
