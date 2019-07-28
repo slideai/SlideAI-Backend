@@ -4,8 +4,25 @@ module.exports = {
         return res.json('aa')
     },
     async startPresentation(req,res){
-        const {lang,author,searchTerm,font,prefix,maximumSentences } = req.body 
+        console.log(req.body)
+        const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,maximumSentences } = req.body
+        const robots = {
+            text: require('./TextController')
+        }
+        console.log(recivedViaFrontEnd)
+        const sourceContentOriginal = await robots.text.fetchContentFromWikipedia(
+                recivedViaFrontEnd.searchTerm,
+                recivedViaFrontEnd.lang) 
+        const sourceContentSanitized = await robots.text.sanitizeContent(
+                sourceContentOriginal
+            )
+        const sentences = await robots.text.breakContentIntoSentences(
+                sourceContentSanitized
+            )
+         console.log(sourceContentOriginal)
+         console.log(sourceContentSanitized)
+         console.log(sentences)
 
-        console.log("Ent rou na apresentacao(rota)")
+        return res.json("Terminou")
     }
 };
