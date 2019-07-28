@@ -1,3 +1,9 @@
+const robots = {
+    text: require('../Robots/Text'),
+    image: require('../Robots/Image'),
+    powerPoint: require('../Robots/PowerPoint')
+}
+
 module.exports = {
     async test(req,res){
         console.log("entrou no index")
@@ -5,10 +11,9 @@ module.exports = {
     },
     async startPresentation(req,res){
         const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,numberOsSlides } = req.body
-        const robots = {
-            text: require('./TextController')
-        }
         console.log(recivedViaFrontEnd)
+
+        //text robot
         const sourceContentOriginal = await robots.text.fetchContentFromWikipedia(
                 recivedViaFrontEnd.searchTerm,
                 recivedViaFrontEnd.lang) 
@@ -24,7 +29,30 @@ module.exports = {
         const sentences = await robots.text.fetchKeywordsOfAllSentences(
             selectSentencesByLimit
         )
-         console.log(sentences)
+        console.log(sentences)
+
+
+        //image robot
+        const fetchedImagesOfAllSentences = await robots.image.fetchImagesOfAllSentences(
+            recivedViaFrontEnd.searchTerm,
+            sentences,
+            recivedViaFrontEnd.lang
+        )
+        const titlesOfSentences = await robots.image.fetchSentencesTitles(
+            recivedViaFrontEnd.searchTerm,
+            fetchedImagesOfAllSentences,
+            recivedViaFrontEnd.lang
+        )
+        const downloadedImages = await robots.image.downloadAllImages(
+            titlesOfSentences
+        )
+        console.log(downloadedImages)
+
+
+
+        //powerPoint robot
+        robots.powerPoint.start(recivedViaFrontEnd,sentences,downloadedImages)
+        
 
         return res.json("Terminou")
     }
