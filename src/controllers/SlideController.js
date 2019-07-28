@@ -4,56 +4,54 @@ const robots = {
     powerPoint: require('../Robots/PowerPoint')
 }
 
-module.exports = {
-    async test(req,res){
-        console.log("entrou no index")
-        return res.json('aa')
-    },
-    async startPresentation(req,res){
-        const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,numberOsSlides } = req.body
-        console.log(recivedViaFrontEnd)
+const controller = {};
 
-        //text robot
-        const sourceContentOriginal = await robots.text.fetchContentFromWikipedia(
-                recivedViaFrontEnd.searchTerm,
-                recivedViaFrontEnd.lang) 
-        const sourceContentSanitized = await robots.text.sanitizeContent(
-                sourceContentOriginal
-            )
-        const contentBreakedIntoSentences = await robots.text.breakContentIntoSentences(
-                sourceContentSanitized
-            )
-        const selectSentencesByLimit = await robots.text.limitMaximumSentences(
-            contentBreakedIntoSentences,numberOsSlides
-        )
-        const sentences = await robots.text.fetchKeywordsOfAllSentences(
-            selectSentencesByLimit
-        )
-        console.log(sentences)
+controller.post = async (req, res) => {
+    const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,numberOsSlides } = req.body
+    console.log(recivedViaFrontEnd)
 
-
-        //image robot
-        const fetchedImagesOfAllSentences = await robots.image.fetchImagesOfAllSentences(
+    //text robot
+    const sourceContentOriginal = await robots.text.fetchContentFromWikipedia(
             recivedViaFrontEnd.searchTerm,
-            sentences,
-            recivedViaFrontEnd.lang
+            recivedViaFrontEnd.lang) 
+    const sourceContentSanitized = await robots.text.sanitizeContent(
+            sourceContentOriginal
         )
-        const titlesOfSentences = await robots.image.fetchSentencesTitles(
-            recivedViaFrontEnd.searchTerm,
-            fetchedImagesOfAllSentences,
-            recivedViaFrontEnd.lang
+    const contentBreakedIntoSentences = await robots.text.breakContentIntoSentences(
+            sourceContentSanitized
         )
-        const downloadedImages = await robots.image.downloadAllImages(
-            titlesOfSentences
-        )
-        console.log(downloadedImages)
+    const selectSentencesByLimit = await robots.text.limitMaximumSentences(
+        contentBreakedIntoSentences,numberOsSlides
+    )
+    const sentences = await robots.text.fetchKeywordsOfAllSentences(
+        selectSentencesByLimit
+    )
+    console.log(sentences)
+
+
+    //image robot
+    const fetchedImagesOfAllSentences = await robots.image.fetchImagesOfAllSentences(
+        recivedViaFrontEnd.searchTerm,
+        sentences,
+        recivedViaFrontEnd.lang
+    )
+    const titlesOfSentences = await robots.image.fetchSentencesTitles(
+        recivedViaFrontEnd.searchTerm,
+        fetchedImagesOfAllSentences,
+        recivedViaFrontEnd.lang
+    )
+    const downloadedImages = await robots.image.downloadAllImages(
+        titlesOfSentences
+    )
+    console.log(downloadedImages)
 
 
 
-        //powerPoint robot
-        robots.powerPoint.start(recivedViaFrontEnd,sentences,downloadedImages)
-        
+    //powerPoint robot
+    robots.powerPoint.start(recivedViaFrontEnd,sentences,downloadedImages)
+    
 
-        return res.json("Terminou")
-    }
-};
+    return res.json("Terminou")
+}
+
+module.exports = controller;
