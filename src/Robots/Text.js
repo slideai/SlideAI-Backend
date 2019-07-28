@@ -1,8 +1,9 @@
 const algorithmia = require('algorithmia')
-const algorithmiaApiKey = require('../../credentials/algorithmia.json').apiKey
+const algorithmiaApiKey = require('../credentials/algorithmia.json').apiKey
+const algorithmiaLang = require('../credentials/algorithmia.json').lang
 const sentenceBoundaryDetection = require('sbd')
 
-const watsonApiKey = require('../../credentials/watson-nlu.json').apikey
+const watsonApiKey = require('../credentials/watson-nlu.json').apikey
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js')
  
 const nlu = new NaturalLanguageUnderstandingV1({
@@ -11,47 +12,64 @@ const nlu = new NaturalLanguageUnderstandingV1({
   url: 'https://gateway.watsonplatform.net/natural-language-understanding/api/'
 })
 
+const state = require('./state.js')
 
-module.exports = {
+class Robot {
+
+  start(content) {
+    return new Promise((next, reject) => {
+      try {
+        content.sourceContentOriginal = await this.fetchContentFromWikipedia(content.searchTerm, content.lang);
+        content.sourceContentSanitized = this.sanitizeContent(content.sourceContentOriginal);
+        content.sentences = this.breakContentIntoSentences(content.sourceContentSanitized);
+        content.sentences = this.limitMaximumSentences(content.sentences, content.maximumSentences);
+        content.sentences = await this.fetchKeywordsOfAllSentences(content.sentences);
+        next(content);
+      } catch(error) {
+        reject(error.message);
+      }
+    });
+  }
+
   async fetchContentFromWikipedia(articleName, lang) {
-    const algorithmiaAuthenticated = algorithmia(algorithmiaApiKey)
-    const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2')
+    const algorithmiaAuthenticated = algorithmia(algorithmiaApiKey);
+    const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2');
 
     const wikipediaResponse = await wikipediaAlgorithm.pipe({
       lang,
       articleName
-    })
-    const wikipediaContent = wikipediaResponse.get()
+    });
+    const wikipediaContent = wikipediaResponse.get();
 
-    return wikipediaContent.content
-  },
+    return wikipediaContent.content;
+  }
 
   sanitizeContent(sourceContentOriginal) {
-    const withoutBlankLinesAndMarkdown = this.removeBlankLinesAndMarkdown(sourceContentOriginal)
-    const withoutDatesInParentheses = this.removeDatesInParentheses(withoutBlankLinesAndMarkdown)
-    return withoutDatesInParentheses
-  },
+    const withoutBlankLinesAndMarkdown = this.removeBlankLinesAndMarkdown(sourceContentOriginal);
+    const withoutDatesInParentheses = this.removeDatesInParentheses(withoutBlankLinesAndMarkdown);
+    return withoutDatesInParentheses;
+  }
 
   removeDatesInParentheses(text) {
-    return text.replace(/\((?:\([^()]*\)|[^()])*\)/gm, '').replace(/  /g,' ')
-  },
+    return text.replace(/\((?:\([^()]*\)|[^()])*\)/gm, '').replace(/  /g,' ');
+  }
 
   removeBlankLinesAndMarkdown(text) {
-    const allLines = text.split('\n')
+    const allLines = text.split('\n');
 
     const withoutBlankLinesAndMarkdown = allLines.filter((line) => {
       if (line.trim().length === 0 || line.trim().startsWith('='))
-        return false
+        return false;
 
-        return true
+        return true;
     })
 
       return withoutBlankLinesAndMarkdown.join(' ')
-  },
+  }
 
   breakContentIntoSentences(sourceContentSanitized) {
-    const contentSentences = []
-    const sentences = sentenceBoundaryDetection.sentences(sourceContentSanitized)
+    const contentSentences = [];
+    const sentences = sentenceBoundaryDetection.sentences(sourceContentSanitized);
 
     sentences.forEach((sentence) => {
       contentSentences.push({
@@ -61,19 +79,21 @@ module.exports = {
       })
     })
 
-    return contentSentences
-  },
+    return contentSentences;
+  }
 
   limitMaximumSentences(sentences, maximumSentences) {
-    return sentences.slice(0, maximumSentences)
-  },
+    return sentences.slice(0, maximumSentences);
+  }
 
   async fetchKeywordsOfAllSentences(sentences) {
     for (const sentence of sentences) {
-      sentence.keywords = await this.fetchWatsonAndReturnKeywords(sentence.text)
+      console.log(`> [text-robot] Sentence: "${sentence.text}"`);
+      sentence.keywords = await this.fetchWatsonAndReturnKeywords(sentence.text);
+      console.log(`> [text-robot] Keywords: ${sentence.keywords.join(', ')}\n`);
     }
     return sentences;
-  },
+  }
 
   async fetchWatsonAndReturnKeywords(sentence) {
     return new Promise((resolve, reject) => {
@@ -83,18 +103,16 @@ module.exports = {
           keywords: {}
         }
       }, (error, response) => {
-        if (error) {
-          reject(error)
-          return
-        }
+        if (error)
+          return reject(error);
 
-        const keywords = response.keywords.map((keyword) => {
-          return keyword.text
-        })
+        const keywords = response.keywords.map(keyword => keyword.text);
 
-        resolve(keywords)
+        resolve(keywords);
       })
     })
   }
 
 }
+
+module.exports = new Robot();
