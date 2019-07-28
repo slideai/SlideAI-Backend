@@ -3,7 +3,8 @@ const SlideController = require('./controllers/SlideController')
 
 const routes = new express.Router();
 
-routes.get('/posts',SlideController.index);
+routes.get('/posts',SlideController.test);
+
 
 
 
