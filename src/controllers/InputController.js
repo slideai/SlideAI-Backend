@@ -1,4 +1,3 @@
-const readline = require('readline-sync')
 
 class Robot{
     selectTextByLanguage(lang, textInEnglish, textInPortuguese){
