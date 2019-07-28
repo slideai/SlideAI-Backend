@@ -8,8 +8,9 @@ module.exports = {
         console.log("entrou no index")
         return res.json('aa')
     },
-    async presentation(req,res){
-        const {author, } = req.body
+    async startPresentation(req,res){
+        const {lang,author,searchTerm,font,prefix,maximumSentences } = req.body 
+
         console.log("Ent rou na apresentacao(rota)")
     }
 };
