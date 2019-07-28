@@ -4,8 +4,7 @@ module.exports = {
         return res.json('aa')
     },
     async startPresentation(req,res){
-        console.log(req.body)
-        const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,maximumSentences } = req.body
+        const recivedViaFrontEnd = {lang,author,searchTerm,font,prefix,numberOsSlides } = req.body
         const robots = {
             text: require('./TextController')
         }
@@ -16,11 +15,15 @@ module.exports = {
         const sourceContentSanitized = await robots.text.sanitizeContent(
                 sourceContentOriginal
             )
-        const sentences = await robots.text.breakContentIntoSentences(
+        const contentBreakedIntoSentences = await robots.text.breakContentIntoSentences(
                 sourceContentSanitized
             )
-         console.log(sourceContentOriginal)
-         console.log(sourceContentSanitized)
+        const selectSentencesByLimit = await robots.text.limitMaximumSentences(
+            contentBreakedIntoSentences,numberOsSlides
+        )
+        const sentences = await robots.text.fetchKeywordsOfAllSentences(
+            selectSentencesByLimit
+        )
          console.log(sentences)
 
         return res.json("Terminou")
