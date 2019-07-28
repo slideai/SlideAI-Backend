@@ -1,8 +1,12 @@
-const readline = require('readline-sync')
 
 class Robot{
-    async start(){
-        
+    selectTextByLanguage(lang, textInEnglish, textInPortuguese){
+        switch(lang) {
+            case "pt":
+              return textInPortuguese;
+            default:
+              return textInEnglish;
+          }
     }
 }
 
