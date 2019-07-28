@@ -15,11 +15,6 @@ const nlu = new NaturalLanguageUnderstandingV1({
 module.exports = {
 
   async start(recivedViaInput) {
-    console.log('> [text-robot] Starting...')
-
-    console.log('> [text-robot] Fetching content from Wikipedia')
-    content.sourceContentOriginal = await this.fetchContentFromWikipedia(content.searchTerm, content.lang)
-    console.log('> [text-robot] Fetching done!')
 
     content.sourceContentSanitized = this.sanitizeContent(content.sourceContentOriginal)
     content.sentences = this.breakContentIntoSentences(content.sourceContentSanitized)
