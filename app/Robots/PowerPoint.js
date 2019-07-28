@@ -8,17 +8,18 @@ class Robot {
   start(content) {
     return new Promise(async (next, reject) => {
       try {
-        const { author, prefix, searchTerm, lang, font, maximumSentences, downloadedImages, sentences } = content;
+        const { id, author, prefix, searchTerm, lang, font, numberOfSlides, downloadedImages, sentences } = content;
         const presentation = new pptx();
 
         presentation.setLayout('LAYOUT_WIDE');
 
         this.defineSettings(presentation, author, prefix, searchTerm);
-        this.createCoverSlide(presentation, author, prefix, searchTerm, lang, font);
-        await this.callCreatorSliders(presentation, maximumSentences, sentences, font);
+        this.createCoverSlide(presentation, author, prefix, searchTerm, lang, font, id);
+        await this.callCreatorSliders(presentation, numberOfSlides, sentences, font, id);
         this.createReferencesSlide(presentation, searchTerm, downloadedImages, lang, font);
-        this.savePresentation(presentation, searchTerm);
-        await this.clearContentImages(maximumSentences);
+        this.savePresentation(presentation, id);
+        this.setExpirePresentation(id);
+        await this.clearContentImages(numberOfSlides, id);
 
         next();
       } catch(error) {
@@ -34,24 +35,24 @@ class Robot {
     presentation.setTitle(`${prefix} ${searchTerm}`);
   }
 
-  createCoverSlide(presentation, author, prefix, searchTerm, lang, font) {
+  createCoverSlide(presentation, author, prefix, searchTerm, lang, font, slideId) {
     let coverSlide =  presentation.addNewSlide();
 
-    this.insertBackgroundImage(coverSlide, './content/0-original.png');
+    this.insertBackgroundImage(coverSlide, `./content/0-${slideId}.png`);
     this.insertOpacityBackground(coverSlide, presentation.shapes.RECTANGLE);
     this.insertLogo(coverSlide);
     this.insertCredits(coverSlide, lang, font);
     this.insertAuthor(coverSlide, author, lang, font);
   }
 
-  callCreatorSliders(presentation, maximumSentences, sentences, font) {
+  callCreatorSliders(presentation, maximumSentences, sentences, font, slideId) {
     return new Promise(async (next, reject) => {
       try {
         let i = 0;
 
         for(i = 0; i < maximumSentences; i++) {
-          const photoExists = await this.verifyIfImageExists(`./content/${i}-original.png`);
-          const imageUrl = photoExists ? `./content/${i}-original.png` : `./content/0-original.png`;
+          const photoExists = await this.verifyIfImageExists(`./content/${i}-${slideId}.png`);
+          const imageUrl = photoExists ? `./content/${i}-${slideId}.png` : `./content/0-${slideId}.png`;
           this.createSlide(presentation, imageUrl, sentences[i].title, sentences[i].text, font);
         }
 
@@ -83,15 +84,21 @@ class Robot {
   }
 
 
-  savePresentation(presentation, searchTerm) {
-    presentation.save(`./public/slides/${searchTerm}`);
+  savePresentation(presentation, slideId) {
+    presentation.save(`./public/slides/${slideId}`);
   }
 
-  async clearContentImages(maximumSentences) {
+  setExpirePresentation(slideId) {
+    setTimeout(async () => {
+      await this.removeFile(`./public/slides/${slideId}.pptx`);
+    }, 1000 * 60 * 30);
+  }
+
+  async clearContentImages(maximumSentences, slideId) {
     let i = 0;
 
     for(i = 0; i < maximumSentences; i++) {
-      await this.removeImage(`./content/${i}-original.png`);
+      await this.removeFile(`./content/${i}-${slideId}.png`);
     }
   }
 
@@ -276,9 +283,9 @@ class Robot {
     });
   }
 
-  removeImage(imageUrl) {
-    return new Promise((next, reject) => {
-      fs.unlink(imageUrl, next);
+  removeFile(file) {
+    return new Promise(next => {
+      fs.unlink(file, next);
     });
   }  
 }

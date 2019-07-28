@@ -13,7 +13,7 @@ class Robot {
       const { searchTerm, sentences, lang } = content;
       content.sentences = await this.fetchImagesOfAllSentences(searchTerm, sentences, lang);
       content.sentences = this.fetchSentencesTitles(searchTerm, content.sentences, lang);
-      content.downloadedImages = await this.downloadAllImages(content.sentences);
+      content.downloadedImages = await this.downloadAllImages(content.sentences, content.id);
       next(content);
     } catch(error) {
       reject(error.message);
@@ -85,7 +85,7 @@ class Robot {
     return imagesUrl;
   }
 
-  downloadAllImages(sentences) {
+  downloadAllImages(sentences, slideId) {
     return new Promise(async (next, reject) => {
       try {
         const downloadedImages = [];
@@ -100,7 +100,7 @@ class Robot {
               if (downloadedImages.includes(imageUrl))
                 throw new Error('Image already downloaded');
 
-              await this.downloadAndSave(imageUrl, `${sentenceIndex}-original.png`);
+              await this.downloadAndSave(imageUrl, `${sentenceIndex}-${slideId}.png`);
               downloadedImages.push(imageUrl);
               console.log(`> [image-robot] [${sentenceIndex}][${imageIndex}] Image successfully downloaded: ${imageUrl}`);
               break;
