@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest __tests__"
+    "test": "jest"
   },
   "dependencies": {
     "cors": "^2.8.5",
