@@ -1,21 +1,30 @@
 const fs = require('fs');
 const pptx = require('pptxgenjs');
 
-const pathForLogoTransparent = 'assets/logo_transparent.png';
+const pathForLogoTransparent = './assets/logo_transparent.png';
 const repUrl = 'https://github.com/LeoFC97/pptx-maker';
 
 class Robot {
-  async start(recivedViaFrontEnd,sentences,downloadedImages) { 
-    const presentation = new pptx();
+  start(content) {
+    return new Promise(async (next, reject) => {
+      try {
+        const { author, prefix, searchTerm, lang, font, maximumSentences, downloadedImages, sentences } = content;
+        const presentation = new pptx();
 
-    presentation.setLayout('LAYOUT_WIDE');
+        presentation.setLayout('LAYOUT_WIDE');
 
-    this.defineSettings(presentation, recivedViaFrontEnd.author, recivedViaFrontEnd.prefix, recivedViaFrontEnd.searchTerm);
-    this.createCoverSlide(presentation, recivedViaFrontEnd.author, recivedViaFrontEnd.prefix, recivedViaFrontEnd.searchTerm, recivedViaFrontEnd.lang, recivedViaFrontEnd.font);
-    await this.callCreatorSliders(presentation, recivedViaFrontEnd.numberOsSlides, sentences, recivedViaFrontEnd.font);
-    this.createReferencesSlide(presentation, recivedViaFrontEnd.searchTerm, downloadedImages, recivedViaFrontEnd.lang, recivedViaFrontEnd.font);
-    this.savePresentation(presentation, recivedViaFrontEnd.searchTerm);
-    await this.clearContentImages(recivedViaFrontEnd.numberOsSlides);
+        this.defineSettings(presentation, author, prefix, searchTerm);
+        this.createCoverSlide(presentation, author, prefix, searchTerm, lang, font);
+        await this.callCreatorSliders(presentation, maximumSentences, sentences, font);
+        this.createReferencesSlide(presentation, searchTerm, downloadedImages, lang, font);
+        this.savePresentation(presentation, searchTerm);
+        await this.clearContentImages(maximumSentences);
+
+        next();
+      } catch(error) {
+        reject(error.message);
+      }
+    });
   }
 
   defineSettings(presentation, author, prefix, searchTerm) {
@@ -26,24 +35,31 @@ class Robot {
   }
 
   createCoverSlide(presentation, author, prefix, searchTerm, lang, font) {
-    const company = 'PPTX Maker';
     let coverSlide =  presentation.addNewSlide();
 
-    this.insertBackgroundImage(coverSlide, 'content/0-original.png');
+    this.insertBackgroundImage(coverSlide, './content/0-original.png');
     this.insertOpacityBackground(coverSlide, presentation.shapes.RECTANGLE);
     this.insertLogo(coverSlide);
     this.insertCredits(coverSlide, lang, font);
     this.insertAuthor(coverSlide, author, lang, font);
   }
 
-  async callCreatorSliders(presentation, numberOsSlides, sentences, font) {
-    let i = 0;
+  callCreatorSliders(presentation, maximumSentences, sentences, font) {
+    return new Promise(async (next, reject) => {
+      try {
+        let i = 0;
 
-    for(i = 0; i < numberOsSlides; i++) {
-      const photoExists = await this.verifyIfImageExists(`content/${i}-original.png`);
-      const imageUrl = photoExists ? `content/${i}-original.png` : `content/0-original.png`;
-      this.createSlide(presentation, imageUrl, sentences[i].title, sentences[i].text, font);
-    }
+        for(i = 0; i < maximumSentences; i++) {
+          const photoExists = await this.verifyIfImageExists(`./content/${i}-original.png`);
+          const imageUrl = photoExists ? `./content/${i}-original.png` : `./content/0-original.png`;
+          this.createSlide(presentation, imageUrl, sentences[i].title, sentences[i].text, font);
+        }
+
+        next();
+      } catch(error) {
+        reject(error.message);
+      }; 
+    });
   }
 
   createSlide(presentation, backgroundUrl, title, text, font) {
@@ -68,14 +84,14 @@ class Robot {
 
 
   savePresentation(presentation, searchTerm) {
-    presentation.save(searchTerm);
+    presentation.save(`./public/slides/${searchTerm}`);
   }
 
-  async clearContentImages(numberOsSlides) {
+  async clearContentImages(maximumSentences) {
     let i = 0;
 
-    for(i = 0; i < numberOsSlides; i++) {
-      await this.removeImage(`content/${i}-original.png`);
+    for(i = 0; i < maximumSentences; i++) {
+      await this.removeImage(`./content/${i}-original.png`);
     }
   }
 

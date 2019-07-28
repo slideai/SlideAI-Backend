@@ -24,7 +24,6 @@
     "pptxgenjs": "^2.5.0",
     "sbd": "^1.0.16",
     "socket-io": "^1.0.0",
-    "socket.io": "^2.2.0",
     "watson-developer-cloud": "^4.0.1"
   }
 }
