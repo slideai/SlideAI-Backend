@@ -1,13 +1,15 @@
-const Slide = require('../models/Slide')
 const sharp = require('sharp')
 const path = require('path')
 const fs = require('fs')
 
 
 module.exports = {
-    async index(req,res){
-        const returnAllPostsSortingByOld = await Slide.find().sort('-createdAt');
+    async test(req,res){
         console.log("entrou no index")
-        return res.json(returnAllPostsSortingByOld);
+        return res.json('aa')
+    },
+    async presentation(req,res){
+        const {author, } = req.body
+        console.log("Ent rou na apresentacao(rota)")
     }
 };
