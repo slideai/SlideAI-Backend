@@ -1,28 +1,25 @@
-const algorithmia = require('algorithmia')
-const algorithmiaApiKey = require('../credentials/algorithmia.json').apiKey
-const algorithmiaLang = require('../credentials/algorithmia.json').lang
-const sentenceBoundaryDetection = require('sbd')
+const algorithmia = require('algorithmia');
+const algorithmiaApiKey = require('../../credentials/algorithmia.json').apiKey;
+const sentenceBoundaryDetection = require('sbd');
 
-const watsonApiKey = require('../credentials/watson-nlu.json').apikey
-const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js')
+const watsonApiKey = require('../../credentials/watson-nlu.json').apikey;
+const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
  
 const nlu = new NaturalLanguageUnderstandingV1({
   iam_apikey: watsonApiKey,
   version: '2018-04-05',
   url: 'https://gateway.watsonplatform.net/natural-language-understanding/api/'
-})
-
-const state = require('./state.js')
+});
 
 class Robot {
 
   start(content) {
-    return new Promise((next, reject) => {
+    return new Promise(async (next, reject) => {
       try {
         content.sourceContentOriginal = await this.fetchContentFromWikipedia(content.searchTerm, content.lang);
         content.sourceContentSanitized = this.sanitizeContent(content.sourceContentOriginal);
         content.sentences = this.breakContentIntoSentences(content.sourceContentSanitized);
-        content.sentences = this.limitMaximumSentences(content.sentences, content.maximumSentences);
+        content.sentences = this.limitMaximumSentences(content.sentences, content.numberOfSlides);
         content.sentences = await this.fetchKeywordsOfAllSentences(content.sentences);
         next(content);
       } catch(error) {
@@ -31,17 +28,23 @@ class Robot {
     });
   }
 
-  async fetchContentFromWikipedia(articleName, lang) {
-    const algorithmiaAuthenticated = algorithmia(algorithmiaApiKey);
-    const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2');
+  fetchContentFromWikipedia(articleName, lang) {
+    return new Promise(async (next, reject) => {
+      try {
+        const algorithmiaAuthenticated = algorithmia(algorithmiaApiKey);
+        const wikipediaAlgorithm = algorithmiaAuthenticated.algo('web/WikipediaParser/0.1.2');
 
-    const wikipediaResponse = await wikipediaAlgorithm.pipe({
-      lang,
-      articleName
+        const wikipediaResponse = await wikipediaAlgorithm.pipe({
+          lang,
+          articleName
+        });
+        const wikipediaContent = wikipediaResponse.get();
+
+        next(wikipediaContent.content);
+      } catch(error) {
+        reject(error.message);
+      }
     });
-    const wikipediaContent = wikipediaResponse.get();
-
-    return wikipediaContent.content;
   }
 
   sanitizeContent(sourceContentOriginal) {
