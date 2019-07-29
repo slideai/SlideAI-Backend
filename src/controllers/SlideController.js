@@ -18,7 +18,7 @@ controller.post = async (req, res) => {
       await robots.powerPoint.start(content);
       res.json({ slideId: content.id });
     } catch(error) {
-      res.status(400).json({ error: "asdsa" });
+      res.status(400).json({ error: req.body });
     }
 }
 
