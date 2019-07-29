@@ -1,5 +1,5 @@
 const algorithmia = require('algorithmia');
-const algorithmiaApiKey = require('../../credentials/algorithmia.json').apiKey || process.env.algorithmiaApiKey.apikey;
+const algorithmiaApiKey = require('../../credentials/algorithmia.json').apiKey || process.env.ALGORITHMIA_API_KEY;
 const sentenceBoundaryDetection = require('sbd');
 
 const watsonApiKey = require('../../credentials/watson-nlu.json').apikey;
