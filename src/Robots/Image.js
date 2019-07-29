@@ -1,10 +1,10 @@
 const imageDownloader = require('image-downloader');
 const google = require('googleapis').google;
 const customSearch = google.customsearch('v1');
+const goolgeSearchApiKey = require('../../credentials/google-search.json').apiKey || process.env.GOOGLE_SEARCH_API;
+const googleSearchEngineId = require('../../credentials/google-search.json').searchEngineId || process.env.GOOLGE_SEARCH_ENGINE_ID;
 
-const googleSearchCredentials = require('../../credentials/google-search.json');
-
-//console.log("API KEY:"+googleSearchCredentials.apiKey+"\n"+"EngineID:"+googleSearchCredentials.searchEngineId);
+//console.log("API KEY:"+goolgeSearchApiKey+"\n"+"EngineID:"+googleSearchEngineId);
 
 class Robot {
   start(content) {
@@ -64,8 +64,8 @@ class Robot {
 
   async fetchGoogleAndReturnImagesLinks(query, lang) {
     const response = await customSearch.cse.list({
-      auth: googleSearchCredentials.apiKey,
-      cx: googleSearchCredentials.searchEngineId,
+      auth: goolgeSearchApiKey,
+      cx: googleSearchEngineId,
       q: query,
       imgSize: 'large',
       searchType: 'image',
