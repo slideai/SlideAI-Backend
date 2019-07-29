@@ -1,3 +1,5 @@
+require ('dotenv').config()
+
 const algorithmia = require('algorithmia');
 const algorithmiaApiKey = process.env.ALGORITHMIA_API_KEY;
 const sentenceBoundaryDetection = require('sbd');
