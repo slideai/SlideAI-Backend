@@ -1,10 +1,10 @@
 const imageDownloader = require('image-downloader');
 const google = require('googleapis').google;
 const customSearch = google.customsearch('v1');
-const goolgeSearchApiKey = require('../../credentials/google-search.json').apiKey || process.env.GOOGLE_SEARCH_API;
-const googleSearchEngineId = require('../../credentials/google-search.json').searchEngineId || process.env.GOOLGE_SEARCH_ENGINE_ID;
+const goolgeSearchApiKey = process.env.GOOGLE_SEARCH_API;
+const googleSearchEngineId = process.env.GOOLGE_SEARCH_ENGINE_ID;
 
-//console.log("API KEY:"+goolgeSearchApiKey+"\n"+"EngineID:"+googleSearchEngineId);
+console.log("API KEY:"+goolgeSearchApiKey+"\n"+"EngineID:"+googleSearchEngineId);
 
 class Robot {
   start(content) {
