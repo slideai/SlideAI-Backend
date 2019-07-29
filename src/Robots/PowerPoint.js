@@ -1,7 +1,7 @@
 const fs = require('fs');
 const pptx = require('pptxgenjs');
 
-const pathForLogoTransparent = '../../assets/logo_transparent.png';
+const pathForLogoTransparent = 'assets/logo_transparent.png';
 const repUrl = 'https://github.com/LeoFC97/pptx-maker';
 
 class Robot {
@@ -84,8 +84,11 @@ class Robot {
   }
 
 
-  savePresentation(presentation, slideId) {
-    presentation.save(`./public/slides/${slideId}`);
+  async savePresentation(presentation, slideId) {
+    console.log('saving........')
+    await presentation.save(`./public/slides/${slideId}.pptx`);
+    console.log('terminou........')
+
   }
 
   setExpirePresentation(slideId) {
