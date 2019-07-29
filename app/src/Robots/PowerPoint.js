@@ -1,7 +1,7 @@
 const fs = require('fs');
 const pptx = require('pptxgenjs');
 
-const pathForLogoTransparent = './assets/logo_transparent.png';
+const pathForLogoTransparent = '../../assets/logo_transparent.png';
 const repUrl = 'https://github.com/LeoFC97/pptx-maker';
 
 class Robot {

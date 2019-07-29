@@ -2,7 +2,7 @@ const imageDownloader = require('image-downloader');
 const google = require('googleapis').google;
 const customSearch = google.customsearch('v1');
 
-const googleSearchCredentials = require('../../credentials/google-search.json');
+const googleSearchCredentials = require('../../../credentials/google-search.json');
 
 //console.log("API KEY:"+googleSearchCredentials.apiKey+"\n"+"EngineID:"+googleSearchCredentials.searchEngineId);
 

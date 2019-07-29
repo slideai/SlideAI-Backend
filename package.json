@@ -9,8 +9,8 @@
     "nodemon": "^1.19.1"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node app/src/index.js",
+    "dev": "nodemon app/src/index.js",
     "test": "jest"
   },
   "dependencies": {
