@@ -10,7 +10,6 @@ const localOfAplication = process.env.PLACE
 describe('Text Robot', () => {
 	
   it('fetch content from Wikipedia', async () => {
-	  console.log('aaa')
 	if(localOfAplication === 'Continuos Integration'){
 		console.log('está na CI')
 		const contentLang = 'pt';
