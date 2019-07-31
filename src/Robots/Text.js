@@ -108,10 +108,13 @@ class Robot {
           keywords: {}
         }
       }, (error, response) => {
-        if (error)
+        if (error){
+          console.log(error)
           return reject(error);
+        }
 
         const keywords = response.keywords.map(keyword => keyword.text);
+        console.log(keywords)
 
         resolve(keywords);
       })
