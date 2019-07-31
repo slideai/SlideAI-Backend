@@ -1,13 +1,23 @@
-const Robot = require('../robots/text');
+const Robot = require('../src/Robots/Text');
+require ('dotenv').config()
+
+const localOfAplication = process.env.PLACE
+console.log(localOfAplication) 
 
 describe('Text Robot', () => {
+	
   it('fetch content from Wikipedia', async () => {
-  	const contentLang = 'pt';
-  	const contentSearchTerm = 'Bill Gates';
+	if(localOfAplication === 'Continuos Integration'){
+		console.log('está na CI')
 
-  	const wikipidiaContent = await Robot.fetchContentFromWikipedia(contentSearchTerm, contentLang);
-  	expect(wikipidiaContent).toBeDefined();
+		const contentLang = 'pt';
+		const contentSearchTerm = 'Bill Gates';
+	  
+		const wikipidiaContent = await Robot.fetchContentFromWikipedia(contentSearchTerm, contentLang);
+		expect(wikipidiaContent).toBeDefined();
+		};
   });
+
 
   it('remove blank lines and markdown', () => {
   	const markdown = '===== Bill Gates =====\n\n\n\nBill Gates\n\nBill Gates';
@@ -40,8 +50,8 @@ describe('Text Robot', () => {
 
   it('fetch Watson and return keywords', async () => {
   	const sentenceText = 'Bill Gates is a great person.';
-  	
   	const keywords = await Robot.fetchWatsonAndReturnKeywords(sentenceText);
+	console.log(keywords)
   	expect(JSON.stringify(keywords)).toBe(JSON.stringify(["Bill Gates", "great person"]));
-  });
+  },30000);
 });
