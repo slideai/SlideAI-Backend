@@ -1,15 +1,17 @@
+/**
+ * @jest-environment node
+ */
+
 const Robot = require('../src/Robots/Text');
 require ('dotenv').config()
 
 const localOfAplication = process.env.PLACE
-console.log(localOfAplication) 
 
 describe('Text Robot', () => {
 	
   it('fetch content from Wikipedia', async () => {
 	if(localOfAplication === 'Continuos Integration'){
 		console.log('está na CI')
-
 		const contentLang = 'pt';
 		const contentSearchTerm = 'Bill Gates';
 	  
