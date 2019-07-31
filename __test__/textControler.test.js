@@ -11,7 +11,6 @@ describe('Text Robot', () => {
 	
   it('fetch content from Wikipedia', async () => {
 	if(localOfAplication === 'Continuos Integration'){
-		console.log('está na CI')
 		const contentLang = 'pt';
 		const contentSearchTerm = 'Bill Gates';
 	  
