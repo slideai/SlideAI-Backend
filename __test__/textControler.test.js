@@ -10,7 +10,6 @@ const localOfAplication = process.env.PLACE
 describe('Text Robot', () => {
 if(localOfAplication === 'Continuos Integration'){
   it('fetch content from Wikipedia', async () => {
-		console.log('está na CI')
 		const contentLang = 'pt';
 		const contentSearchTerm = 'Bill Gates';
 	  
@@ -60,5 +59,5 @@ if(localOfAplication === 'Continuos Integration'){
 		const keywords = await Robot.fetchWatsonAndReturnKeywords(sentenceText)
 		expect(JSON.stringify(keywords)).toBe(JSON.stringify(["Bill Gates", "great person"]))
 	},30000);
-  }
-});
+  };
+})
