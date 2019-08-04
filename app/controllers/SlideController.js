@@ -15,7 +15,7 @@ controller.post = async (req, res) => {
     if(!searchTerm)
       return res.status(400).json({ error: 'search term missing' });
 
-    if(numberOfSliddes > 20)
+    if(numberOfSlides > 20)
       return res.status(400).json({ error: 'number of slides exceeded the limit' });
 
     try {
