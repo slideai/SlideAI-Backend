@@ -1,6 +1,6 @@
 function generateRandomId() {
   const random = () => Math.floor(Math.random() * Date.now());
-  return `${random()}_${random()}`;
+  return `${random()}`;
 }
 
 module.exports = generateRandomId;
