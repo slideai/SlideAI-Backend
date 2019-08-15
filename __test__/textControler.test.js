@@ -16,13 +16,13 @@ if(localOfAplication === 'Continuos Integration'){
 		const wikipidiaContent = await Robot.fetchContentFromWikipedia(contentSearchTerm, contentLang)
 		expect(wikipidiaContent).toBeDefined();
 	}	
-  )};
+  ),30000};
 
 
   it('remove blank lines and markdown', () => {
-  	const markdown = '===== Bill Gates =====\n\n\n\nBill Gates\n\nBill Gates';
+  	const textWithMarkdowns = '===== Bill Gates =====\n\n\n\nBill Gates\n\nBill Gates';
 
-  	const contentWithoutBlankLinesAndMarkdown = Robot.removeBlankLinesAndMarkdown(markdown)
+  	const contentWithoutBlankLinesAndMarkdown = Robot.removeBlankLinesAndMarkdown(textWithMarkdowns)
   	expect(contentWithoutBlankLinesAndMarkdown).toBe('Bill Gates Bill Gates')
   });
 
@@ -40,9 +40,9 @@ if(localOfAplication === 'Continuos Integration'){
   });
 
   it('break content into sentences', () => {
-  	const sourceContentSanitized = 'Bill Gates is a great person. Bill Gates is cool.Bill gates has a lot of money';
+  	const content = 'Bill Gates is a great person. Bill Gates is cool.Bill gates has a lot of money';
 
-  	const sentences = Robot.breakContentIntoSentences(sourceContentSanitized);
+  	const sentences = Robot.breakContentIntoSentences(content);
   	expect(sentences.length).toBe(3);
   });
 
