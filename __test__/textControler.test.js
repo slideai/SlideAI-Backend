@@ -40,10 +40,10 @@ if(localOfAplication === 'Continuos Integration'){
   });
 
   it('break content into sentences', () => {
-  	const sourceContentSanitized = 'Bill Gates is a great person. Bill Gates is cool.';
+  	const sourceContentSanitized = 'Bill Gates is a great person. Bill Gates is cool.Bill gates has a lot of money';
 
   	const sentences = Robot.breakContentIntoSentences(sourceContentSanitized);
-  	expect(sentences.length).toBe(2);
+  	expect(sentences.length).toBe(3);
   });
 
   it('limit maximum sentences', () => {
