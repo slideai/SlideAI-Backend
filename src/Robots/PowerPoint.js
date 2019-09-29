@@ -2,7 +2,7 @@ const fs = require('fs');
 const pptx = require('pptxgenjs');
 
 const pathForLogoTransparent = 'assets/logo_transparent.png';
-const repUrl = 'https://github.com/LeoFC97/pptx-maker';
+const repUrl = 'https://github.com/slideai/SlideAI-Backend';
 
 class Robot {
   start(content) {
@@ -22,7 +22,7 @@ class Robot {
         await this.clearContentImages(numberOfSlides, id);
 
         next();
-      } catch(error) {
+      } catch (error) {
         reject(error.message);
       }
     });
@@ -36,7 +36,7 @@ class Robot {
   }
 
   createCoverSlide(presentation, author, prefix, searchTerm, lang, font, slideId) {
-    let coverSlide =  presentation.addNewSlide();
+    let coverSlide = presentation.addNewSlide();
 
     this.insertBackgroundImage(coverSlide, `./content/0-${slideId}.png`);
     this.insertOpacityBackground(coverSlide, presentation.shapes.RECTANGLE);
@@ -50,16 +50,16 @@ class Robot {
       try {
         let i = 0;
 
-        for(i = 0; i < maximumSentences; i++) {
+        for (i = 0; i < maximumSentences; i++) {
           const photoExists = await this.verifyIfImageExists(`./content/${i}-${slideId}.png`);
           const imageUrl = photoExists ? `./content/${i}-${slideId}.png` : `./content/0-${slideId}.png`;
           this.createSlide(presentation, imageUrl, sentences[i].title, sentences[i].text, font);
         }
 
         next();
-      } catch(error) {
+      } catch (error) {
         reject(error.message);
-      }; 
+      };
     });
   }
 
@@ -100,7 +100,7 @@ class Robot {
   async clearContentImages(maximumSentences, slideId) {
     let i = 0;
 
-    for(i = 0; i < maximumSentences; i++) {
+    for (i = 0; i < maximumSentences; i++) {
       await this.removeFile(`./content/${i}-${slideId}.png`);
     }
   }
@@ -116,10 +116,11 @@ class Robot {
       h: '100%',
     });
   }
- 
+
   insertOpacityBackground(slide, RECTANGLE) {
     slide.addShape(RECTANGLE,
-      { x: 0,
+      {
+        x: 0,
         y: 0,
         w: '100%',
         h: '100%',
@@ -128,17 +129,17 @@ class Robot {
           color: '000000',
           alpha: 25
         }
-    });
+      });
   }
 
   insertLogo(slide) {
     slide.addImage({
       path: pathForLogoTransparent,
-      hyperlink: {url: repUrl, tooltip: 'GitHub'},
+      hyperlink: { url: repUrl, tooltip: 'GitHub' },
       x: 11.2,
-      y: 5.4, 
+      y: 5.4,
       w: 2.5,
-      h:2.5,
+      h: 2.5,
     });
   }
 
@@ -147,19 +148,20 @@ class Robot {
 
     slide.addText([{
       text: creditsText,
-      options: { hyperlink:{url:repUrl, tooltip:'GitHub'} }}],
+      options: { hyperlink: { url: repUrl, tooltip: 'GitHub' } }
+    }],
       {
-        x:'25%',
-        y:'90%',
-        fontSize:20,
-        bold:true,
-        color:'ffffff',
+        x: '25%',
+        y: '90%',
+        fontSize: 20,
+        bold: true,
+        color: 'ffffff',
         fontFace: font
-    });
+      });
   }
 
   insertAuthor(slide, author, lang, font) {
-    const madeText = this.selectTextByLanguage(lang, 'Made by', 'Feito por'); 
+    const madeText = this.selectTextByLanguage(lang, 'Made by', 'Feito por');
 
     slide.addText(`${madeText} ${author}`, {
       x: 0,
@@ -170,11 +172,11 @@ class Robot {
       bold: true,
       align: 'center',
       fontFace: font
-    });    
+    });
   }
 
   insertPresentationTitle(slide, prefix, searchTerm, font) {
-    slide.addText(`${prefix}\n${searchTerm}`,{
+    slide.addText(`${prefix}\n${searchTerm}`, {
       x: 0,
       y: 0,
       w: '100%',
@@ -198,7 +200,7 @@ class Robot {
       bold: true,
       color: 'ffffff',
       fontFace: font
-    });   
+    });
   }
 
   insertReferencesTitle(slide, lang, font) {
@@ -224,19 +226,19 @@ class Robot {
       h: '100%',
       align: 'center',
       font: 15,
-      color:'ffffff',
+      color: 'ffffff',
       bold: true,
       margin: 16,
       fontFace: font
-    });    
+    });
   }
 
   insertWikipediaURL(slide, lang, searchTerm, font) {
     const wikipediaUrl = `https://${lang}.wikipedia.org/wiki/${searchTerm}`;
-       
+
     slide.addText([{
       text: wikipediaUrl,
-      options: {hyperlink:{url: wikipediaUrl, tooltip: 'Wikipedia'}},
+      options: { hyperlink: { url: wikipediaUrl, tooltip: 'Wikipedia' } },
     }], {
       x: 1.5,
       y: 1.3,
@@ -250,12 +252,12 @@ class Robot {
   insertImagesURL(slide, downloadedImages, font) {
     let i = 0;
 
-    for(i = 0; i < downloadedImages.length; i++) {
-      let spaceBetweenLines = i/2;
-    
+    for (i = 0; i < downloadedImages.length; i++) {
+      let spaceBetweenLines = i / 2;
+
       slide.addText([{
         text: downloadedImages[i],
-        options: {hyperlink:{url: downloadedImages[i],tooltip: 'downloadedImage'}},
+        options: { hyperlink: { url: downloadedImages[i], tooltip: 'downloadedImage' } },
       }], {
         x: 1.5,
         y: 1.8 + spaceBetweenLines,
@@ -263,11 +265,11 @@ class Robot {
         fontFace: font,
         color: '696969'
       });
-    }   
+    }
   }
 
   selectTextByLanguage(lang, textInEnglish, textInPortuguese) {
-    switch(lang) {
+    switch (lang) {
       case "pt":
         return textInPortuguese;
       default:
@@ -278,7 +280,7 @@ class Robot {
   verifyIfImageExists(imageUrl) {
     return new Promise((next, reject) => {
       fs.readFile(imageUrl, err => {
-        if(err)
+        if (err)
           next(false);
         else
           next(true);
@@ -290,7 +292,7 @@ class Robot {
     return new Promise(next => {
       fs.unlink(file, next);
     });
-  }  
+  }
 }
 
 
