@@ -1,4 +1,4 @@
-require ('dotenv').config()
+require('dotenv').config()
 
 const algorithmia = require('algorithmia');
 const algorithmiaApiKey = process.env.ALGORITHMIA_API_KEY;
@@ -6,7 +6,7 @@ const sentenceBoundaryDetection = require('sbd');
 
 const watsonApiKey = process.env.WATSON_APIKEY;
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
- 
+
 const nlu = new NaturalLanguageUnderstandingV1({
   iam_apikey: watsonApiKey,
   version: '2018-04-05',
@@ -24,7 +24,7 @@ class Robot {
         content.sentences = this.limitMaximumSentences(content.sentences, content.numberOfSlides);
         content.sentences = await this.fetchKeywordsOfAllSentences(content.sentences);
         next(content);
-      } catch(error) {
+      } catch (error) {
         reject(error.message);
       }
     });
@@ -43,7 +43,7 @@ class Robot {
         const wikipediaContent = wikipediaResponse.get();
 
         next(wikipediaContent.content);
-      } catch(error) {
+      } catch (error) {
         reject(error.message);
       }
     });
@@ -56,7 +56,7 @@ class Robot {
   }
 
   removeDatesInParentheses(text) {
-    return text.replace(/\((?:\([^()]*\)|[^()])*\)/gm, '').replace(/  /g,' ');
+    return text.replace(/\((?:\([^()]*\)|[^()])*\)/gm, '').replace(/  /g, ' ');
   }
 
   removeBlankLinesAndMarkdown(text) {
@@ -66,10 +66,10 @@ class Robot {
       if (line.trim().length === 0 || line.trim().startsWith('='))
         return false;
 
-        return true;
+      return true;
     })
 
-      return withoutBlankLinesAndMarkdown.join(' ')
+    return withoutBlankLinesAndMarkdown.join(' ')
   }
 
   breakContentIntoSentences(sourceContentSanitized) {
@@ -108,7 +108,7 @@ class Robot {
           keywords: {}
         }
       }, (error, response) => {
-        if (error){
+        if (error) {
           console.log(error)
           return reject(error);
         }

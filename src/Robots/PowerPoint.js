@@ -9,6 +9,7 @@ class Robot {
     return new Promise(async (next, reject) => {
       try {
         const { id, author, prefix, searchTerm, lang, font, numberOfSlides, downloadedImages, sentences } = content;
+        console.log(content)
         const presentation = new pptx();
 
         presentation.setLayout('LAYOUT_WIDE');
